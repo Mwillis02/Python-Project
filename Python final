@@ -1,0 +1,98 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# URL of the table to be scraped
+url = 'https://en.tutiempo.net/climate/ws-723825.html'
+
+# Send an HTTP request and get the content
+response = requests.get(url)
+content = response.content
+
+#Creating a data frame to store the data
+df = pd.DataFrame({
+  "Year": [""],
+  "T": [""],
+  "TM": [""],
+  "Tm": [""],
+  "PP": [""],
+  "V": [""],
+  "RA": [""],
+  "SN": [""],
+  "TS": [""],
+  "FG": [""],
+  "TN": [""],
+  "GR": [""]
+})
+
+# Parse the HTML content with BeautifulSoup
+soup = BeautifulSoup(content, 'html.parser')
+
+# Find the attribute to the table
+table = soup.find("div", class_="mt5 minoverflow")
+#Findning the rows in the table
+rows = table.find_all('tr')
+
+count = 0
+# data = rows[3].find_all('td')
+# for da in data:
+#     print(da.text)
+
+#Creating variables to hold the data
+Year, T, TM, Tm, PP, V, RA, SN, TS, FG, TN, GR = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+#Generating the data in each row
+
+for row in rows:
+  table_data = row.find_all("td")
+  for i in range(len(table_data)):
+    data_attr = table_data[i]
+    data = data_attr.text
+    if i == 0:
+      Year = data
+
+    elif i == 1:
+      T = data
+    elif i == 2:
+      TM = data
+    elif i == 3:
+      Tm = data
+    elif i == 4:
+      PP = data
+    elif i == 5:
+      V = data
+    elif i == 6:
+      RA = data
+    elif i == 7:
+      SN = data
+    elif i == 8:
+      TS = data
+    elif i == 9:
+      FG = data
+    elif i == 10:
+      TN = data
+    elif i == 11:
+      GR = data
+
+  #updating the data frame
+  df_new = pd.DataFramedf = pd.DataFrame({
+    "Year": [Year],
+    "T": [T],
+    "TM": [TM],
+    "Tm": [Tm],
+    "PP": [PP],
+    "V": [V],
+    "RA": [RA],
+    "SN": [SN],
+    "TS": [TS],
+    "FG": [FG],
+    "TN": [TN],
+    "GR": [GR]
+  })
+  df = pd.concat([df, df_new])
+  Year, T, TM, Tm, PP, V, RA, SN, TS, FG, TN, GR = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+#Data is stored in the data Frame
+
+#Saving a data as a csv
+df.to_csv("C:/Users/willi/OneDrive/Desktop/Morgan's_work.csv", index=False)
